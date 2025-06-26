@@ -23,8 +23,9 @@ NEXT_PUBLIC_OBS_DEFAULT_PORT=4455
 - Avoid typing passwords repeatedly during development
 - Secure storage of credentials (ensure `.env.local` is in `.gitignore`)
 - Easy configuration for different environments
+- **Consistent port configuration** - Uses port 7328 by default for reliable localStorage persistence
 
-**Security Note:** The `NEXT_PUBLIC_` prefix makes these variables available to the client-side code. Only use this for non-sensitive defaults. For production deployments, consider server-side configuration.tudio WebSocket traffic in real-time. This tool connects to OBS Studio's WebSocket server and displays all incoming events, making it useful for debugging, monitoring, and understanding OBS behavior.
+**Security Note:** The `NEXT_PUBLIC_` prefix makes these variables available to the client-side code. Only use this for non-sensitive defaults. For production deployments, consider server-side configuration.
 
 ## Features
 
@@ -93,12 +94,17 @@ This TypeScript setup script provides an interactive configuration experience.
 cp .env.example .env.local
 ```
 
-Edit `.env.local` to set your default OBS WebSocket credentials:
+Edit `.env.local` to set your default configuration:
 
 ```env
+# Application Configuration
+PORT=7328
+
+# OBS WebSocket Configuration
 NEXT_PUBLIC_OBS_DEFAULT_PASSWORD=your_obs_password
 NEXT_PUBLIC_OBS_DEFAULT_ADDRESS=localhost
 NEXT_PUBLIC_OBS_DEFAULT_PORT=4455
+NEXT_PUBLIC_OBS_AUTO_CONNECT=true
 ```
 
 4. Run the development server:
@@ -109,7 +115,7 @@ pnpm dev
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:7328](http://localhost:7328) in your browser (or the port you configured in `.env.local`)
 
 ## Usage
 
