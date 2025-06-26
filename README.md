@@ -1,6 +1,6 @@
 # OBS WebSocket Listener
 
-A Next.js application for monitoring and analyzing OBS 4. **Export Data**: Click "Export" to download logs as JSON for further analysis
+A Next.js application for monitoring and analyzing OBS Studio WebSocket traffic in real-time. This tool connects to OBS Studio's WebSocket server and displays all incoming events, making it useful for debugging, monitoring, and understanding OBS behavior.
 
 ## Environment Configuration
 
@@ -8,7 +8,7 @@ You can set default connection values using environment variables in a `.env.loc
 
 ```env
 # Default OBS WebSocket password (leave empty if no password)
-NEXT_PUBLIC_OBS_DEFAULT_PASSWORD=your_password_here
+NEXT_PUBLIC_OBS_DEFAULT_PASSWORD=your_obs_password
 
 # Default connection address (usually localhost)
 NEXT_PUBLIC_OBS_DEFAULT_ADDRESS=localhost
@@ -64,7 +64,7 @@ NEXT_PUBLIC_OBS_DEFAULT_PORT=4455
 1. Clone this repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/trillium/obs-listener.git
 cd obs-listener
 ```
 
@@ -191,18 +191,29 @@ The application automatically listens for common OBS events including:
 ```
 src/
 ├── app/
-│   ├── layout.tsx      # Root layout
+│   ├── layout.tsx      # Root layout with providers
 │   ├── page.tsx        # Main dashboard page
-│   └── globals.css     # Global styles
+│   └── globals.css     # Global styles and Tailwind imports
 ├── components/
-│   ├── OBSListener.tsx # Main WebSocket listener orchestrator
-│   ├── AppHeader.tsx   # App header with hamburger menu and connection settings
-│   ├── LogControls.tsx # Log filtering and control buttons
-│   ├── LogDisplay.tsx  # Log viewer container
-│   └── LogEntryItem.tsx # Individual log entry component
+│   ├── features/       # Feature-specific components
+│   │   ├── OBSListener.tsx        # Main WebSocket listener orchestrator
+│   │   ├── AppHeader.tsx          # App header with hamburger menu
+│   │   ├── CommandHistoryPanel.tsx # Command history with usage tracking
+│   │   ├── LogControls.tsx        # Log filtering and control buttons
+│   │   ├── LogDisplay.tsx         # Log viewer container
+│   │   ├── LogEntryItem.tsx       # Individual log entry component
+│   │   └── index.ts               # Feature components barrel export
+│   └── ui/             # Reusable UI components
+│       ├── Button.tsx             # Base button component
+│       ├── RerunButton.tsx        # Specialized rerun button
+│       ├── ToastContainer.tsx     # Toast notification system
+│       └── index.ts               # UI components barrel export
 ├── hooks/
-│   ├── useLogs.ts      # Log management and filtering logic
-│   └── useOBSEventHandlers.ts # OBS WebSocket event handling
+│   ├── useCommandHistory.ts       # Command history and usage tracking
+│   ├── useLogs.ts                 # Log management and filtering logic
+│   ├── useOBSCommands.ts          # OBS command execution
+│   ├── useOBSEventHandlers.ts     # OBS WebSocket event handling
+│   └── useToast.ts                # Toast notification management
 ├── lib/
 │   └── config.ts       # Configuration utilities and validation
 └── types/
