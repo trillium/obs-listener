@@ -123,7 +123,7 @@ export function useCommandHistory(): UseCommandHistoryReturn {
     }, [commandHistory]);
 
     const clearSessionCounts = useCallback(() => {
-        setCommandHistory((prev) => 
+        setCommandHistory((prev) =>
             prev.map((item) => ({ ...item, sessionCount: 0 }))
         );
     }, []);

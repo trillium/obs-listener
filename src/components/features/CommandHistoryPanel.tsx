@@ -56,17 +56,21 @@ export default function CommandHistoryPanel({
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Rerunnable actions from OBS events and manual commands
             </p>
-            
+
             {/* Statistics */}
             <div className="flex items-center space-x-4 mt-2">
               <div className="text-xs">
-                <span className="text-gray-500 dark:text-gray-400">Lifetime:</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  Lifetime:
+                </span>
                 <span className="ml-1 font-medium text-blue-600 dark:text-blue-400">
                   {totalLifetimeExecutions} total
                 </span>
               </div>
               <div className="text-xs">
-                <span className="text-gray-500 dark:text-gray-400">Session:</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  Session:
+                </span>
                 <span className="ml-1 font-medium text-green-600 dark:text-green-400">
                   {sessionExecutions} executed
                 </span>
@@ -135,7 +139,7 @@ export default function CommandHistoryPanel({
                     <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
                       {item.description}
                     </span>
-                    
+
                     {/* Enhanced usage statistics */}
                     <div className="flex items-center space-x-1">
                       {activeTab === "frequent" && (
