@@ -233,6 +233,19 @@ pnpm start
 4. Test thoroughly
 5. Submit a pull request
 
+## Acknowledgments
+
+This project was developed with the assistance of **Claude Sonnet 4** by Anthropic. Claude provided significant help with:
+
+- Code architecture and component design
+- TypeScript implementation and type safety
+- React hooks and state management patterns
+- UI/UX improvements and accessibility features
+- Code organization and best practices
+- Documentation and project structure
+
+The AI assistance helped accelerate development while maintaining high code quality and modern React patterns.
+
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
