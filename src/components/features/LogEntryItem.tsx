@@ -1,4 +1,7 @@
+"use client";
+
 import clsx from "clsx";
+import { useState, useRef } from "react";
 import RerunButton from "../ui/RerunButton";
 import type { LogEntry } from "@/hooks/useLogs";
 
@@ -13,6 +16,27 @@ export default function LogEntryItem({
   onRerunCommand,
   isConnected,
 }: LogEntryItemProps) {
+  const [dropdownPosition, setDropdownPosition] = useState<"bottom" | "top">("bottom");
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const checkDropdownPosition = () => {
+    if (detailsRef.current && dropdownRef.current) {
+      const detailsRect = detailsRef.current.getBoundingClientRect();
+      const dropdownHeight = 240; // max-h-60 = 240px approximately
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - detailsRect.bottom;
+      const spaceAbove = detailsRect.top;
+
+      // If there's not enough space below but there is above, position it above
+      if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+        setDropdownPosition("top");
+      } else {
+        setDropdownPosition("bottom");
+      }
+    }
+  };
+
   const getLogTypeColor = (type: LogEntry["type"]) => {
     switch (type) {
       case "info":
@@ -68,11 +92,29 @@ export default function LogEntryItem({
         <div className="flex items-center space-x-2">
           {/* View Data button */}
           {log.data && (
-            <details className="group inline">
+            <details 
+              ref={detailsRef}
+              className="group inline relative"
+              onToggle={(e) => {
+                if (e.currentTarget.open) {
+                  // Small delay to ensure the dropdown is rendered
+                  setTimeout(() => checkDropdownPosition(), 0);
+                }
+              }}
+            >
               <summary className="text-xs text-gray-600 dark:text-gray-400 cursor-pointer hover:text-gray-800 dark:hover:text-gray-200 select-none flex items-center gap-1">
                 📋 Data
               </summary>
-              <div className="absolute right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-20 max-w-md max-h-60 overflow-auto">
+              <div 
+                ref={dropdownRef}
+                className={clsx(
+                  "absolute right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-20 max-w-md max-h-60 overflow-auto",
+                  {
+                    "mt-1": dropdownPosition === "bottom",
+                    "mb-1 bottom-full": dropdownPosition === "top",
+                  }
+                )}
+              >
                 <div className="p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
