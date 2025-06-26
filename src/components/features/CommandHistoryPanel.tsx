@@ -13,6 +13,8 @@ interface CommandHistoryPanelProps {
   onRunCommand: (command: LogEntry["command"]) => void;
   onClearHistory: () => void;
   isConnected: boolean;
+  totalLifetimeExecutions?: number;
+  sessionExecutions?: number;
 }
 
 export default function CommandHistoryPanel({
@@ -21,6 +23,8 @@ export default function CommandHistoryPanel({
   onRunCommand,
   onClearHistory,
   isConnected,
+  totalLifetimeExecutions = 0,
+  sessionExecutions = 0,
 }: CommandHistoryPanelProps) {
   const [activeTab, setActiveTab] = useState<"frequent" | "recent">("frequent");
 
@@ -45,13 +49,29 @@ export default function CommandHistoryPanel({
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
-          <div>
+          <div className="flex-1">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Command History
             </h2>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Rerunnable actions from OBS events and manual commands
             </p>
+            
+            {/* Statistics */}
+            <div className="flex items-center space-x-4 mt-2">
+              <div className="text-xs">
+                <span className="text-gray-500 dark:text-gray-400">Lifetime:</span>
+                <span className="ml-1 font-medium text-blue-600 dark:text-blue-400">
+                  {totalLifetimeExecutions} total
+                </span>
+              </div>
+              <div className="text-xs">
+                <span className="text-gray-500 dark:text-gray-400">Session:</span>
+                <span className="ml-1 font-medium text-green-600 dark:text-green-400">
+                  {sessionExecutions} executed
+                </span>
+              </div>
+            </div>
           </div>
           <Button
             onClick={onClearHistory}
@@ -115,11 +135,20 @@ export default function CommandHistoryPanel({
                     <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
                       {item.description}
                     </span>
-                    {activeTab === "frequent" && (
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
-                        {item.useCount} {item.useCount === 1 ? "use" : "uses"}
-                      </span>
-                    )}
+                    
+                    {/* Enhanced usage statistics */}
+                    <div className="flex items-center space-x-1">
+                      {activeTab === "frequent" && (
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full font-medium">
+                          {item.useCount} lifetime
+                        </span>
+                      )}
+                      {item.sessionCount > 0 && (
+                        <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full font-medium">
+                          {item.sessionCount} session
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                     <span className="font-mono bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded">

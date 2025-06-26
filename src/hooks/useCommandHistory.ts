@@ -5,16 +5,21 @@ export interface CommandHistoryItem {
     id: string;
     command: LogEntry["command"];
     lastUsed: Date;
-    useCount: number;
+    useCount: number; // Lifetime total count
+    sessionCount: number; // Count for current session
     description: string;
+    firstUsed: Date; // When command was first tracked
 }
 
 interface UseCommandHistoryReturn {
     commandHistory: CommandHistoryItem[];
     addCommandToHistory: (command: LogEntry["command"]) => void;
     clearHistory: () => void;
+    clearSessionCounts: () => void; // New function to reset session counts
     getFrequentCommands: (limit?: number) => CommandHistoryItem[];
     getRecentCommands: (limit?: number) => CommandHistoryItem[];
+    getTotalLifetimeExecutions: () => number; // Total across all commands
+    getSessionExecutions: () => number; // Total for current session
 }
 
 const STORAGE_KEY = "obs-listener-command-history";
@@ -32,12 +37,16 @@ export function useCommandHistory(): UseCommandHistoryReturn {
                     command: LogEntry["command"];
                     lastUsed: string;
                     useCount: number;
+                    sessionCount?: number;
                     description: string;
+                    firstUsed?: string;
                 }>;
-                // Convert date strings back to Date objects
+                // Convert date strings back to Date objects and handle legacy data
                 const historyWithDates = parsed.map((item) => ({
                     ...item,
                     lastUsed: new Date(item.lastUsed),
+                    sessionCount: 0, // Reset session count on load
+                    firstUsed: item.firstUsed ? new Date(item.firstUsed) : new Date(item.lastUsed), // Use lastUsed as fallback for legacy data
                 }));
                 setCommandHistory(historyWithDates);
             }
@@ -71,17 +80,21 @@ export function useCommandHistory(): UseCommandHistoryReturn {
                 updated[existingIndex] = {
                     ...updated[existingIndex],
                     lastUsed: new Date(),
-                    useCount: updated[existingIndex].useCount + 1,
+                    useCount: updated[existingIndex].useCount + 1, // Lifetime count
+                    sessionCount: updated[existingIndex].sessionCount + 1, // Session count
                 };
                 return updated;
             } else {
                 // Add new command to history
+                const now = new Date();
                 const newItem: CommandHistoryItem = {
                     id: commandId,
                     command,
-                    lastUsed: new Date(),
-                    useCount: 1,
+                    lastUsed: now,
+                    useCount: 1, // Lifetime count starts at 1
+                    sessionCount: 1, // Session count starts at 1
                     description: command.description,
+                    firstUsed: now, // Track when first used
                 };
                 return [...prev, newItem];
             }
@@ -109,11 +122,28 @@ export function useCommandHistory(): UseCommandHistoryReturn {
             .slice(0, limit);
     }, [commandHistory]);
 
+    const clearSessionCounts = useCallback(() => {
+        setCommandHistory((prev) => 
+            prev.map((item) => ({ ...item, sessionCount: 0 }))
+        );
+    }, []);
+
+    const getTotalLifetimeExecutions = useCallback(() => {
+        return commandHistory.reduce((total, item) => total + item.useCount, 0);
+    }, [commandHistory]);
+
+    const getSessionExecutions = useCallback(() => {
+        return commandHistory.reduce((total, item) => total + item.sessionCount, 0);
+    }, [commandHistory]);
+
     return {
         commandHistory,
         addCommandToHistory,
         clearHistory,
+        clearSessionCounts,
         getFrequentCommands,
         getRecentCommands,
+        getTotalLifetimeExecutions,
+        getSessionExecutions,
     };
 }

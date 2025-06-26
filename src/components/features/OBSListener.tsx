@@ -49,6 +49,8 @@ export default function OBSListener() {
     clearHistory,
     getFrequentCommands,
     getRecentCommands,
+    getTotalLifetimeExecutions,
+    getSessionExecutions,
   } = useCommandHistory();
 
   // Enhanced addLog that automatically tracks commands
@@ -227,6 +229,8 @@ export default function OBSListener() {
           onRunCommand={executeCommandWithHistory}
           onClearHistory={clearHistory}
           isConnected={isConnected}
+          totalLifetimeExecutions={getTotalLifetimeExecutions()}
+          sessionExecutions={getSessionExecutions()}
         />
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">

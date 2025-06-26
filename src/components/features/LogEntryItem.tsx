@@ -16,7 +16,9 @@ export default function LogEntryItem({
   onRerunCommand,
   isConnected,
 }: LogEntryItemProps) {
-  const [dropdownPosition, setDropdownPosition] = useState<"bottom" | "top">("bottom");
+  const [dropdownPosition, setDropdownPosition] = useState<"bottom" | "top">(
+    "bottom"
+  );
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -92,7 +94,7 @@ export default function LogEntryItem({
         <div className="flex items-center space-x-2">
           {/* View Data button */}
           {log.data && (
-            <details 
+            <details
               ref={detailsRef}
               className="group inline relative"
               onToggle={(e) => {
@@ -105,7 +107,7 @@ export default function LogEntryItem({
               <summary className="text-xs text-gray-600 dark:text-gray-400 cursor-pointer hover:text-gray-800 dark:hover:text-gray-200 select-none flex items-center gap-1">
                 📋 Data
               </summary>
-              <div 
+              <div
                 ref={dropdownRef}
                 className={clsx(
                   "absolute right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-20 max-w-md max-h-60 overflow-auto",
